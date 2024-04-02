@@ -1,26 +1,19 @@
-import { useState, useEffect } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
+import { useState } from 'react'
 import './App.css'
-import DiscoverWalletProviders from './components/DiscoverWalletProviders'
+// import DiscoverWalletProviders from './components/DiscoverWalletProviders'
 // import { ethers } from 'ethers';
 import { RPS_CONTRACT_ABI, RPS_BYTECODE, HASHER_CONTRACT_ABI, HASHER_BYTECODE } from "./configABI"; // Import the CONTRACT_ABI from config.js
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 // import { WagmiProvider, useAccount, useWalletClient } from 'wagmi'
-import { Config, account } from './config'
-import { Account } from './account'
-import { WalletOptions } from './wallet-options'
-import { goerli } from 'wagmi/chains'
+// import { Config, account } from './config'
+// import { Account } from './account'
+// import { WalletOptions } from './wallet-options'
+// import { goerli } from 'wagmi/chains'
 import {
-  http,
   Address,
-  Hash,
-  TransactionReceipt,
   createPublicClient,
   createWalletClient,
   custom,
-  stringify,
-  getContractAddress,
   parseEther,
 } from 'viem'
 import 'viem/window'
@@ -31,17 +24,10 @@ import 'viem/window'
 
 
 
-import { ethers, keccak256 } from 'ethers';
+import { ethers } from 'ethers';
 const queryClient = new QueryClient();
 
-// import { createPublicClient, http } from 'viem'
-import { localhost, mainnet } from 'viem/chains'
-
-const client = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-})
-
+import { localhost } from 'viem/chains'
 
 // function ConnectWallet() { 
 //   const { isConnected } = useAccount() 
@@ -50,27 +36,21 @@ const client = createPublicClient({
 // } 
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [provider, setProvider] = useState();
-  const [network, setNetwork] = useState(null);
-  const [contract, setContract] = useState<ethers.Contract>();
+  // const [provider, setProvider] = useState();
   const [contractAddress, setContractAddress] = useState<Address>();
   const [hasherContractAddress, setHasherContractAddress] = useState<Address>();
-  const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>();
-  const [userAccount, setUserAccount] = useState<string>('')
+  // const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>();
+  // const [userAccount, setUserAccount] = useState<string>('')
   const [c1, setC1] = useState(0)
   const [c1Hash, setC1Hash] = useState<string>('')
   const [c2, setC2] = useState(0)
   const [salt, setSalt] = useState<string>()
-  const [chainId, setChainId] = useState(5);
-  // const { data: walletClient } = useWalletClient({ chainId: goerli.id });
   const [account, setAccount] = useState<Address>()
 
   // Input states
   const [stake1, setStake1] = useState(0);
   const [stake2, setStake2] = useState(0);
   const [player2, setPlayer2] = useState<Address>();
-  const [game, setGame] = useState('');
 
 
   const publicClient = createPublicClient({
@@ -157,48 +137,14 @@ function App() {
 
   }
 
-  async function callContractFunction(move: number, stake: number) {
-    // const provider = ethers.getDefaultProvider("http://localhost:7545");
-    // const signer = provider.getSigner();
-    // const privateKey = '0x42892e7d28eb64f382695ea2ad9edb169954e58c445d89c0b56e5e9ce29e0bb1';
-    // const wallet = new ethers.Wallet(privateKey, provider);
-    if (contractAddress != undefined) {
+  async function callContractFunction() {
+    if (contractAddress != undefined && c2 != undefined && stake2 != undefined) {
       console.log("FOUND CONTRACT: " + contractAddress);
-      // const address = await contract.getAddress();
-      // const contract2 = new ethers.Contract(address, CONTRACT_ABI, wallet);
 
-
-      // Create a new instance of the contract
-      // const contract = new ethers.Contract(contractAddress, CONTRACT_ABI, wallet);
-      // const signer = new ethers.Wallet(privateKey, provider);
-      // const contractRef = new ethers.Contract(contractAddress, RPS_CONTRACT_ABI, signer)
-      // console.log("FOUND CONTRACT REF")
-
-      // Call the function
-      // if (contractRef != undefined) {
-      // const result = await contractRef.play(2, { value: ethers.parseEther("1.5"), gasLimit: 0x502833 });
-      // console.log(result);
-
-
-      //         const hash = await walletClient?.deployContract({
-      //   abi: HASHER_CONTRACT_ABI,
-      //   bytecode: HASHER_BYTECODE as `0x${string}`,
-      //   account: account,
-      //   value: parseEther("1.5"),
-      //   args: [],
-      // });
-      // console.log("HASH: ", hash)
-
-      // const addr = getContractAddress({
-      //   from: account,
-      //   bytecode: HASHER_BYTECODE as `0x${string}`,
-      //   opcode: 'CREATE',
-      // })
-      // const tx = await publicClient.waitForTransactionReceipt({hash: hash});
       const [address] = await walletClient.requestAddresses()
 
 
-      const { request } = await walletClient.writeContract({
+      await walletClient.writeContract({
         address: contractAddress,
         account: address,
         abi: RPS_CONTRACT_ABI,
@@ -206,11 +152,9 @@ function App() {
         args: [c2],
         value: parseEther(stake2.toString()),
       })
-      // }
+    } else {
+      window.alert("Please fill in all fields")
     }
-    // const result = await contract.yourFunctionName(arg1, arg2, ...);
-
-    // console.log(result);
   }
 
   async function solveContract() {
@@ -219,14 +163,17 @@ function App() {
 
       const [address] = await walletClient.requestAddresses()
 
-
-      const { request } = await walletClient.writeContract({
-        address: contractAddress,
-        account: address,
-        abi: RPS_CONTRACT_ABI,
-        functionName: 'solve',
-        args: [c1, parseInt(salt)],
-      })
+      if (c1 != undefined && salt != undefined) {
+        await walletClient.writeContract({
+          address: contractAddress,
+          account: address,
+          abi: RPS_CONTRACT_ABI,
+          functionName: 'solve',
+          args: [c1, parseInt(salt)],
+        })
+      } else {
+        window.alert("Please fill in all fields")
+      }
     }
   }
 
@@ -272,7 +219,7 @@ function App() {
     const randomHex = ethers.hexlify(ethers.randomBytes(32))
     setSalt(randomHex)
   }
-  
+
   async function handleSetPlayer2Address(val: string) {
     setPlayer2(`0x${val.slice(2)}`)
   }
@@ -377,13 +324,13 @@ function App() {
                   <option value={5}>Lizard</option>
                 </select>
               </div>
-              <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={() => callContractFunction(c2, stake2)}>Submit</button>
+              <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={() => callContractFunction()}>Submit</button>
             </div>
           </div>
           <div className="border-2 border-gray-300 p-6 rounded-md">
             <div className="flex flex-col space-y-4">
               <h2 className="text-2xl mb-4">Player 1 Solve</h2>
-              <div>{"Player 1 Address: " + userAccount}</div>
+              {/* <div>{"Player 1 Address: " + userAccount}</div> */}
               <div>
                 <select className="border-2 border-gray-300 p-2 w-full max-w-xs" value={c1} onChange={(e) => setC1(parseInt(e.target.value))}>
                   <option value={0} selected disabled>
@@ -396,28 +343,27 @@ function App() {
                   <option value={5}>Lizard</option>
                 </select>
               </div>
-              <div className='inputWithButton'>
+              <div>
                 <input
                   className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
                   type="text"
                   placeholder="Salt"
                   value={salt}
-                  onChange={(e) => setSalt(parseInt(e.target.value))}
+                  onChange={(e) => setSalt(e.target.value)}
                 />
-                <button onClick={() => setSalt(Math.floor(Math.random() * Number(ethers.MaxUint256)))}>Random</button>
               </div>
               <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={solveContract}>Submit</button>
             </div>
           </div>
         </div>
-        <DiscoverWalletProviders
+        {/* <DiscoverWalletProviders
           setSelectedWallet={setSelectedWallet}
           selectedWallet={selectedWallet}
           onSetUserAccountChange={setUserAccount}
           userAccount={userAccount}
           setProvider={setProvider}
           provider={provider}
-        />
+        /> */}
         {/* <ConnectWallet /> */}
       </QueryClientProvider>
       {/* </WagmiProvider> */}
