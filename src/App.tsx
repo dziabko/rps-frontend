@@ -27,7 +27,7 @@ import 'viem/window'
 import { ethers } from 'ethers';
 const queryClient = new QueryClient();
 
-import { localhost } from 'viem/chains'
+import { sepolia } from 'viem/chains'
 
 // function ConnectWallet() { 
 //   const { isConnected } = useAccount() 
@@ -54,11 +54,11 @@ function App() {
 
 
   const publicClient = createPublicClient({
-    chain: localhost,
+    chain: sepolia,
     transport: custom(window.ethereum!),
   })
   const walletClient = createWalletClient({
-    chain: localhost,
+    chain: sepolia,
     transport: custom(window.ethereum!),
   })
 
@@ -181,7 +181,7 @@ function App() {
 
     const [address1] = await walletClient.requestAddresses()
     setAccount(address1)
-    setHasherContractAddress("0x2dc3a8Af5Cae2DcCD94e075079A14D1c7Cba480A")
+    setHasherContractAddress("0xe58fE4a822bdf1EEe43e10DEf31Bb5614018939D")
 
     if (account && hasherContractAddress == undefined) {
 
