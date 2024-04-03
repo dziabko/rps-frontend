@@ -15,8 +15,12 @@ import {
   createWalletClient,
   custom,
   parseEther,
+  BaseError,
+  TransactionExecutionError,
 } from 'viem'
 import 'viem/window'
+
+import LoadingSpin from "react-loading-spin";
 
 
 
@@ -97,6 +101,10 @@ function App() {
 
 
       if (c1Hash && stake1 && player2) {
+        const elem  = document.getElementById('loadingSpinner');
+        if (elem) {
+          elem.style.display = 'block';
+        }
         // const { request } = await publicClient.simulateContract({
         //   address: hasherTx.contractAddress,
         //   account: address1,
@@ -122,13 +130,14 @@ function App() {
           args: [c1Hash, player2],
         });
 
-        console.log("HASH: ", hash)
+        // console.log("HASH: ", hash)
         // setC1Hash(hash)
         const tx = await publicClient.waitForTransactionReceipt({ hash: hash });
-        console.log("DEPLOYED CONTRACT ADDRESS: ", tx.contractAddress);
-        if (tx.contractAddress != undefined || tx.contractAddress != null) {
+        // console.log("DEPLOYED CONTRACT ADDRESS: ", tx.contractAddress);
+        if ((tx.contractAddress != undefined || tx.contractAddress != null) && elem != undefined) {
           setContractAddress(tx.contractAddress);
           window.alert("Deployed RPS Address: " + tx.contractAddress)
+          elem.style.display = 'none';
         }
       }
 
@@ -140,19 +149,32 @@ function App() {
 
   async function callContractFunction() {
     if (contractAddress != undefined && c2 != undefined && stake2 != undefined) {
-      console.log("FOUND CONTRACT: " + contractAddress);
+      // console.log("FOUND CONTRACT: " + contractAddress);
 
       const [address] = await walletClient.requestAddresses()
 
 
-      await walletClient.writeContract({
-        address: contractAddress,
-        account: address,
-        abi: RPS_CONTRACT_ABI,
-        functionName: 'play',
-        args: [c2],
-        value: parseEther(stake2.toString()),
-      })
+      try {
+        await walletClient.writeContract({
+          address: contractAddress,
+          account: address,
+          abi: RPS_CONTRACT_ABI,
+          functionName: 'play',
+          args: [c2],
+          value: parseEther(stake2.toString()),
+        })
+      } catch (err) {
+        if (err instanceof BaseError) {
+          const transactionExecutionError = err.walk(err => err instanceof TransactionExecutionError)
+          if (transactionExecutionError instanceof TransactionExecutionError) {
+            const errorName = transactionExecutionError.name
+            const message = transactionExecutionError.message
+            window.alert("ErrorName: " + errorName +  "\nMessage: " + message)
+          }
+        }
+      }
+
+      // await walletClient.writeContract(request)
     } else {
       window.alert("Please fill in all fields")
     }
@@ -160,7 +182,7 @@ function App() {
 
   async function solveContract() {
     if (contractAddress != undefined && salt != undefined && c1 != undefined) {
-      console.log("FOUND CONTRACT: " + contractAddress);
+      // console.log("FOUND CONTRACT: " + contractAddress);
 
       const [address] = await walletClient.requestAddresses()
 
@@ -293,7 +315,15 @@ function App() {
                 <button onClick={() => handleHash()}>Hash(c1, salt)</button>
                 {/* <div>Result: {c1Hash}</div> */}
               </div>
-              <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={deployContract}>Submit</button>
+              <div id="submitContainer">
+
+                <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={deployContract}>Submit</button>
+
+                <div id="loadingSpinner" className="flex">
+                  <LoadingSpin
+                  size={'25px'}/>
+                 </div>
+              </div>
             </div>
           </div>
           <div className="border-2 border-gray-300 p-6 rounded-md">
@@ -334,6 +364,15 @@ function App() {
             <div className="flex flex-col space-y-4">
               <h2 className="text-2xl mb-4">Player 1 Solve</h2>
               {/* <div>{"Player 1 Address: " + userAccount}</div> */}
+              <div className='w-full'>
+                <input
+                  className="border-gray-300 p-2 mb-2 w-full max-w-xs"
+                  type="text"
+                  placeholder="RPS Contract Address"
+                  value={contractAddress}
+                  onChange={(e) => handleSetContractAddress(e.target.value)}
+                />
+              </div>
               <div>
                 <select className="border-2 border-gray-300 p-2 w-full max-w-xs" value={c1} onChange={(e) => setC1(parseInt(e.target.value))}>
                   <option value={0} selected disabled>

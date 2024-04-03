@@ -28,3 +28,12 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+
+Execution Details:
+- On Player 2 turn, if a 'TransactionExecutionError' is caught, retry the turn again in a few seconds
+- Set desired stake, 'player 2` address, move, and random salt, then hash move & salt, before creating a game
+- The generated salt, and move, must be hashed before deploying the contract
+- Once contract is finishsed deploying, an alert will display to you the deployed contract's address
+- Player 2 must use that contract address, and the appropriate stake when playing his turn
+- Player 1 finally submits their original move & salt to solve the game, and to determine the winner
