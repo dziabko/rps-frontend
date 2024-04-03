@@ -51,10 +51,10 @@ export default {
 | Lizard   | -1,1 | 1,-1        |      -1,1 |   1,-1    |  0,0      |
 
 
-E[payoff for P1 playing Rock] = 0 * q<sub>r</sub> - 1 *  q<sub>p</sub>  + 1 * q<sub>s</sub>  - 1 * q<sub>sp</sub> + 1 * q<sub>Liz</sub> = -q<sub>p</sub> + q<sub>s</sub> - q<sub>sp</sub> + q<sub>Liz</sub>
-E[payoff for P1 playing Paper] = 1 * q<sub>r</sub> + 0 *  q<sub>p</sub>  - 1 *  q<sub>s</sub>  + 1 * q<sub>sp</sub> - 1 * q<sub>Liz</sub> = q<sub>r</sub> - q<sub>s</sub> + q<sub>sp</sub> - q<sub>Liz</sub>
-E[payoff for P1 playing Scissors] = -1 * q<sub>r</sub> + 1 * q<sub>p</sub>  + 0 *  q<sub>s</sub>  - 1 * q<sub>sp</sub> + 1 * q<sub>Liz</sub> = -q<sub>r</sub> + q<sub>p</sub> - q<sub>sp</sub> + q<sub>Liz</sub>
-E[payoff for P1 playing Spock] = 1 * q<sub>r</sub> - 1 * q<sub>p</sub>  + 1 * q<sub>s</sub>  + 0 * q<sub>sp</sub> - 1 * q<sub>Liz</sub> = q<sub>r</sub> - q<sub>p</sub> + q<sub>s</sub> - q<sub>Liz</sub>
-E[payoff for P1 playing Lizard] = -1 * q<sub>r</sub> + 1 * q<sub>p</sub>  - 1 * q<sub>s</sub>  + 1 * q<sub>sp</sub> + 0 * q<sub>Liz</sub> = -q<sub>r</sub> + q<sub>p</sub> - q<sub>s</sub>  + q<sub>sp</sub>
+E[payoff for P1 playing Rock] = 0 * q<sub>r</sub> - 1 *  q<sub>p</sub>  + 1 * q<sub>s</sub>  - 1 * q<sub>sp</sub> + 1 * q<sub>Liz</sub> = -q<sub>p</sub> + q<sub>s</sub> - q<sub>sp</sub> + q<sub>Liz</sub><br />
+E[payoff for P1 playing Paper] = 1 * q<sub>r</sub> + 0 *  q<sub>p</sub>  - 1 *  q<sub>s</sub>  + 1 * q<sub>sp</sub> - 1 * q<sub>Liz</sub> = q<sub>r</sub> - q<sub>s</sub> + q<sub>sp</sub> - q<sub>Liz</sub><br />
+E[payoff for P1 playing Scissors] = -1 * q<sub>r</sub> + 1 * q<sub>p</sub>  + 0 *  q<sub>s</sub>  - 1 * q<sub>sp</sub> + 1 * q<sub>Liz</sub> = -q<sub>r</sub> + q<sub>p</sub> - q<sub>sp</sub> + q<sub>Liz</sub><br />
+E[payoff for P1 playing Spock] = 1 * q<sub>r</sub> - 1 * q<sub>p</sub>  + 1 * q<sub>s</sub>  + 0 * q<sub>sp</sub> - 1 * q<sub>Liz</sub> = q<sub>r</sub> - q<sub>p</sub> + q<sub>s</sub> - q<sub>Liz</sub><br />
+E[payoff for P1 playing Lizard] = -1 * q<sub>r</sub> + 1 * q<sub>p</sub>  - 1 * q<sub>s</sub>  + 1 * q<sub>sp</sub> + 0 * q<sub>Liz</sub> = -q<sub>r</sub> + q<sub>p</sub> - q<sub>s</sub>  + q<sub>sp</sub><br />
 
 The mixed strategy nash equilibrium for this game is for each player to randomly choose one of the five {Rock, Paper, Scissors, Spock, Lizard} with a probability of 1/5 for each of them.
