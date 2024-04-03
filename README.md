@@ -30,7 +30,7 @@ export default {
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 
 
-Execution Details:
+## Execution Details
 - On Player 2 turn, if a 'TransactionExecutionError' is caught, retry the turn again in a few seconds
 - Set desired stake, 'player 2` address, move, and random salt, then hash move & salt, before creating a game
 - The generated salt, and move, must be hashed before deploying the contract
