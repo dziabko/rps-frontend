@@ -128,6 +128,7 @@ function App() {
         console.log("DEPLOYED CONTRACT ADDRESS: ", tx.contractAddress);
         if (tx.contractAddress != undefined || tx.contractAddress != null) {
           setContractAddress(tx.contractAddress);
+          window.alert("Deployed RPS Address: " + tx.contractAddress)
         }
       }
 
@@ -164,13 +165,15 @@ function App() {
       const [address] = await walletClient.requestAddresses()
 
       if (c1 != undefined && salt != undefined) {
-        await walletClient.writeContract({
+        const { request } = await publicClient.simulateContract({
           address: contractAddress,
           account: address,
           abi: RPS_CONTRACT_ABI,
           functionName: 'solve',
           args: [c1, parseInt(salt)],
         })
+
+        await walletClient.writeContract(request)
       } else {
         window.alert("Please fill in all fields")
       }
@@ -300,7 +303,7 @@ function App() {
                 <input
                   className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
                   type="text"
-                  placeholder="Contract Address"
+                  placeholder="RPS Contract Address"
                   onChange={(e) => handleSetContractAddress(e.target.value)}
                 />
               </div>
