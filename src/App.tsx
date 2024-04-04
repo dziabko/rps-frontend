@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
-// import DiscoverWalletProviders from './components/DiscoverWalletProviders'
+import DiscoverWalletProviders from './components/DiscoverWalletProviders'
 // import { ethers } from 'ethers';
 import { RPS_CONTRACT_ABI, RPS_BYTECODE, HASHER_CONTRACT_ABI, HASHER_BYTECODE } from "./configABI"; // Import the CONTRACT_ABI from config.js
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -40,11 +40,11 @@ import { sepolia } from 'viem/chains'
 // } 
 
 function App() {
-  // const [provider, setProvider] = useState();
+  const [provider, setProvider] = useState();
   const [contractAddress, setContractAddress] = useState<Address>();
   const [hasherContractAddress, setHasherContractAddress] = useState<Address>();
-  // const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>();
-  // const [userAccount, setUserAccount] = useState<string>('')
+  const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>();
+  const [userAccount, setUserAccount] = useState<string>('')
   const [c1, setC1] = useState(0)
   const [c1Hash, setC1Hash] = useState<string>('')
   const [c2, setC2] = useState(0)
@@ -68,15 +68,22 @@ function App() {
 
 
   // useEffect(() => {
-  //   const initializeProvider = async () => {
-  //     if (window.ethereum) {
-  //       await window.ethereum.request({ method: 'eth_requestAccounts' });
-  //       const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //       setProvider(provider);
-  //     }
-  //   };
+  //   console.log("USEEFFECT");
+  //   if (window.ethereum) {
+  //     window.ethereum.on('chainChanged', (chainId) => {
+  //       console.log("CHAINID: " + chainId)
+  //       setChainId(chainId)
+  //       // window.location.reload();
+  //     })
+  //   }
+  // //   const initializeProvider = async () => {
+  // //     if (window.ethereum) {
+  // //       await window.ethereum.request({ method: 'eth_requestAccounts' });
+  // //       const provider = new ethers.providers.Web3Provider(window.ethereum);
+  // //       setProvider(provider);
+  // //     }
+  //   });
 
-  //   initializeProvider();
 
   //   const getNetwork = async () => {
   //     if (provider) {
@@ -101,7 +108,7 @@ function App() {
 
 
       if (c1Hash && stake1 && player2) {
-        const elem  = document.getElementById('loadingSpinner');
+        const elem = document.getElementById('loadingSpinner');
         if (elem) {
           elem.style.display = 'block';
         }
@@ -169,7 +176,7 @@ function App() {
           if (transactionExecutionError instanceof TransactionExecutionError) {
             const errorName = transactionExecutionError.name
             const message = transactionExecutionError.message
-            window.alert("ErrorName: " + errorName +  "\nMessage: " + message)
+            window.alert("ErrorName: " + errorName + "\nMessage: " + message)
           }
         }
       }
@@ -257,8 +264,16 @@ function App() {
   return (
     // <WagmiProvider config={Config}>
     <>
+        <DiscoverWalletProviders
+          setSelectedWallet={setSelectedWallet}
+          selectedWallet={selectedWallet}
+          onSetUserAccountChange={setUserAccount}
+          userAccount={userAccount}
+          setProvider={setProvider}
+          provider={provider}
+        />
       <QueryClientProvider client={queryClient}>
-        <div>
+        <div id="outerContainer">
           <div id="createGameContainer" className="">
             <div className="flex flex-col space-y-4">
               <h2 className="text-2xl mb-4">Create Game</h2>
@@ -322,8 +337,8 @@ function App() {
 
                 <div id="loadingSpinner" className="flex">
                   <LoadingSpin
-                  size={'25px'}/>
-                 </div>
+                    size={'25px'} />
+                </div>
               </div>
             </div>
           </div>
@@ -399,14 +414,6 @@ function App() {
             </div>
           </div>
         </div>
-        {/* <DiscoverWalletProviders
-          setSelectedWallet={setSelectedWallet}
-          selectedWallet={selectedWallet}
-          onSetUserAccountChange={setUserAccount}
-          userAccount={userAccount}
-          setProvider={setProvider}
-          provider={provider}
-        /> */}
         {/* <ConnectWallet /> */}
       </QueryClientProvider>
       {/* </WagmiProvider> */}
