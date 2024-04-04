@@ -257,6 +257,7 @@ function App() {
                   className="inputContainer"
                   type="text"
                   placeholder="RPS Contract Address"
+                  value={contractAddress}
                   onChange={(e) => handleSetContractAddress(e.target.value)}
                 />
               </div>
