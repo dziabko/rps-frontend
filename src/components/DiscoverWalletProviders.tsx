@@ -5,44 +5,52 @@ import { formatAddress } from '../utils'
 import * as chains from 'viem/chains'
 
 
-function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserAccountChange, userAccount, setProvider, provider }) {
+function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserAccountChange, userAccount }: {
+  setSelectedWallet: (wallet: EIP6963ProviderDetail) => void,
+  selectedWallet: EIP6963ProviderDetail | undefined,
+  onSetUserAccountChange: (account: string) => void,
+  userAccount: string
+}) {
   // const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>()
   // const [userAccount, setUserAccount] = useState<string>('')
   const [chainId, setChainId] = useState<string>('')
   const [chainName, setChainName] = useState<string>('')
   const providers = useSyncProviders()
+  // const [provider, setProvider] = useState<EIP1193Provider>();
 
   console.log('providers', providers)
 
 
   useEffect(() => {
     if (window.ethereum) {
-      window.ethereum.on('chainChanged', (chainId) => {
+      window.ethereum.on('chainChanged', (ChainId) => {
         console.log("CHAINID: " + chainId)
-        setChainId(chainId)
-        setChainName(getChain(parseInt(chainId)).name)
+        setChainId(ChainId)
+        setChainName(getChain(parseInt(ChainId as string)).name)
         // window.location.reload();
       })
     }
   })
 
   const handleConnect = async (providerWithInfo: EIP6963ProviderDetail) => {
-    setProvider(provider)
+    // setProvider(providerWithInfo.provider)
     // console.log('providerWithInfo', providerWithInfo)
     // console.log('provider', providerWithInfo.provider)
-    const accounts = await providerWithInfo.provider
-      .request({ method: 'eth_requestAccounts' })
+    const accountsReq = await (providerWithInfo.provider
+      .request({ method: 'eth_requestAccounts' }) as Promise<string[]>)
       .catch(console.error)
+
+    const accounts = accountsReq as string[]
 
     const chainId = await providerWithInfo.provider
       .request({ method: 'eth_chainId' })
       .catch(console.error)
 
-    if (accounts?.[0] && chainId?.[0]) {
+    if (accounts && accounts?.[0] && chainId) {
       setSelectedWallet(providerWithInfo)
       setChainId(chainId as string)
       setChainName(getChain(parseInt(chainId as string)).name)
-      onSetUserAccountChange(accounts?.[0])
+      onSetUserAccountChange(accounts[0] as string)
     }
   }
 
@@ -78,8 +86,8 @@ function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserA
       {userAccount &&
         <div className={styles.walletDetails}>
           <div className={styles.logo}>
-            <img src={selectedWallet.info.icon} alt={selectedWallet.info.name} />
-            <div>{selectedWallet.info.name}</div>
+            <img src={selectedWallet?.info.icon} alt={selectedWallet?.info.name} />
+            <div>{selectedWallet?.info.name}</div>
             <div>({formatAddress(userAccount)})</div>
             {/* <div><strong>uuid:</strong> {selectedWallet.info.uuid}</div> */}
             {/* <div><strong>rdns:</strong> {selectedWallet.info.rdns}</div> */}

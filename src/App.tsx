@@ -1,14 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 import DiscoverWalletProviders from './components/DiscoverWalletProviders'
-// import { ethers } from 'ethers';
-import { RPS_CONTRACT_ABI, RPS_BYTECODE, HASHER_CONTRACT_ABI, HASHER_BYTECODE } from "./configABI"; // Import the CONTRACT_ABI from config.js
+import { RPS_CONTRACT_ABI, RPS_BYTECODE, HASHER_CONTRACT_ABI } from "./configABI"; // Import the CONTRACT_ABI from config.js
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-// import { WagmiProvider, useAccount, useWalletClient } from 'wagmi'
-// import { Config, account } from './config'
-// import { Account } from './account'
-// import { WalletOptions } from './wallet-options'
-// import { goerli } from 'wagmi/chains'
 import {
   Address,
   createPublicClient,
@@ -21,28 +15,15 @@ import {
 import 'viem/window'
 
 import LoadingSpin from "react-loading-spin";
-
-
-
-
-
-
-
 import { ethers } from 'ethers';
 const queryClient = new QueryClient();
 
+// Specify which chain will be using
 import { sepolia } from 'viem/chains'
 
-// function ConnectWallet() { 
-//   const { isConnected } = useAccount() 
-//   if (isConnected) return <Account /> 
-//   return <WalletOptions /> 
-// } 
-
 function App() {
-  const [provider, setProvider] = useState();
+  // const [provider, setProvider] = useState<EIP1193Provider>();
   const [contractAddress, setContractAddress] = useState<Address>();
-  const [hasherContractAddress, setHasherContractAddress] = useState<Address>();
   const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>();
   const [userAccount, setUserAccount] = useState<string>('')
   const [c1, setC1] = useState(0)
@@ -50,6 +31,9 @@ function App() {
   const [c2, setC2] = useState(0)
   const [salt, setSalt] = useState<string>()
   const [account, setAccount] = useState<Address>()
+
+  // Hasher contract address (default deployed on Sepolia testnet)
+  const hasherContractAddress = '0xe58fE4a822bdf1EEe43e10DEf31Bb5614018939D' as Address;
 
   // Input states
   const [stake1, setStake1] = useState(0);
@@ -67,68 +51,21 @@ function App() {
   })
 
 
-  // useEffect(() => {
-  //   console.log("USEEFFECT");
-  //   if (window.ethereum) {
-  //     window.ethereum.on('chainChanged', (chainId) => {
-  //       console.log("CHAINID: " + chainId)
-  //       setChainId(chainId)
-  //       // window.location.reload();
-  //     })
-  //   }
-  // //   const initializeProvider = async () => {
-  // //     if (window.ethereum) {
-  // //       await window.ethereum.request({ method: 'eth_requestAccounts' });
-  // //       const provider = new ethers.providers.Web3Provider(window.ethereum);
-  // //       setProvider(provider);
-  // //     }
-  //   });
-
-
-  //   const getNetwork = async () => {
-  //     if (provider) {
-  //       const network = await provider.getNetwork();
-  //       setNetwork(network.name);
-  //     }
-  //   };
-
-  //   getNetwork();
 
 
   async function deployContract() {
 
     const [address1] = await walletClient.requestAddresses()
     setAccount(address1)
-    // console.log("ADDRESS: ", address)
 
     if (account && c1Hash && player2 && stake1) {
-      console.log("DEPLOYING RPS@@@@@")
-
-
-
-
-      if (c1Hash && stake1 && player2) {
+        // Enable loading spinner once contract is deployed
         const elem = document.getElementById('loadingSpinner');
         if (elem) {
           elem.style.display = 'block';
         }
-        // const { request } = await publicClient.simulateContract({
-        //   address: hasherTx.contractAddress,
-        //   account: address1,
-        //   abi: HASHER_CONTRACT_ABI,
-        //   functionName: 'hash',
-        //   args: [c1, salt],
-        // })
 
-
-
-        // const { request } = await walletClient.writeContract({
-        //   address: hasherTx.contractAddress,
-        //   account: address1,
-        //   abi: HASHER_CONTRACT_ABI,
-        //   functionName: 'hash',
-        //   args: [c1, salt],
-        // })
+        // Deploy contract
         const hash = await walletClient?.deployContract({
           abi: RPS_CONTRACT_ABI,
           bytecode: RPS_BYTECODE as `0x${string}`,
@@ -137,16 +74,13 @@ function App() {
           args: [c1Hash, player2],
         });
 
-        // console.log("HASH: ", hash)
-        // setC1Hash(hash)
+        // Once contract deployment tx finishes, get contractAddress & alert user
         const tx = await publicClient.waitForTransactionReceipt({ hash: hash });
-        // console.log("DEPLOYED CONTRACT ADDRESS: ", tx.contractAddress);
         if ((tx.contractAddress != undefined || tx.contractAddress != null) && elem != undefined) {
           setContractAddress(tx.contractAddress);
           window.alert("Deployed RPS Address: " + tx.contractAddress)
           elem.style.display = 'none';
         }
-      }
 
     } else {
       window.alert("Please fill in all fields")
@@ -156,11 +90,7 @@ function App() {
 
   async function callContractFunction() {
     if (contractAddress != undefined && c2 != undefined && stake2 != undefined) {
-      // console.log("FOUND CONTRACT: " + contractAddress);
-
       const [address] = await walletClient.requestAddresses()
-
-
       try {
         await walletClient.writeContract({
           address: contractAddress,
@@ -180,8 +110,6 @@ function App() {
           }
         }
       }
-
-      // await walletClient.writeContract(request)
     } else {
       window.alert("Please fill in all fields")
     }
@@ -189,7 +117,6 @@ function App() {
 
   async function solveContract() {
     if (contractAddress != undefined && salt != undefined && c1 != undefined) {
-      // console.log("FOUND CONTRACT: " + contractAddress);
 
       const [address] = await walletClient.requestAddresses()
 
@@ -213,25 +140,6 @@ function App() {
 
     const [address1] = await walletClient.requestAddresses()
     setAccount(address1)
-    setHasherContractAddress("0xe58fE4a822bdf1EEe43e10DEf31Bb5614018939D")
-
-    if (account && hasherContractAddress == undefined) {
-
-      const hasherHash = await walletClient?.deployContract({
-        abi: HASHER_CONTRACT_ABI,
-        bytecode: HASHER_BYTECODE as `0x${string}`,
-        account: account,
-        args: [],
-      });
-
-      const hasherTx = await publicClient.waitForTransactionReceipt({ hash: hasherHash });
-
-      console.log("DEPLOYED Hasher CONTRACT ADDRESS: ", hasherTx.contractAddress);
-      if (hasherTx.contractAddress) {
-        setHasherContractAddress(hasherTx.contractAddress);
-      }
-    }
-
 
     if (hasherContractAddress != undefined && c1 != undefined && salt != undefined) {
       const data = await publicClient.readContract({
@@ -262,15 +170,14 @@ function App() {
 
 
   return (
-    // <WagmiProvider config={Config}>
     <>
         <DiscoverWalletProviders
           setSelectedWallet={setSelectedWallet}
           selectedWallet={selectedWallet}
           onSetUserAccountChange={setUserAccount}
           userAccount={userAccount}
-          setProvider={setProvider}
-          provider={provider}
+          // setProvider={setProvider}
+          // provider={provider}
         />
       <QueryClientProvider client={queryClient}>
         <div id="outerContainer">
@@ -379,7 +286,6 @@ function App() {
           <div id="player1TurnContainer" className="border-2 border-gray-300 p-6 rounded-md">
             <div className="flex flex-col space-y-4">
               <h2 className="text-2xl mb-4">Player 1 Solve</h2>
-              {/* <div>{"Player 1 Address: " + userAccount}</div> */}
               <div className='w-full'>
                 <input
                   className="inputContainer"
@@ -414,9 +320,7 @@ function App() {
             </div>
           </div>
         </div>
-        {/* <ConnectWallet /> */}
       </QueryClientProvider>
-      {/* </WagmiProvider> */}
     </>
   )
 }

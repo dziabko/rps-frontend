@@ -25,3 +25,6 @@ interface EIP1193Provider {
     send?: (request: { method: string, params?: Array<unknown> }, callback: (error: Error | null, response: unknown) => void) => void
     request: (request: { method: string, params?: Array<unknown> }) => Promise<unknown>
 }
+
+declare module "*.module.css";
+declare module "*.module.scss";
