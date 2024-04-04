@@ -11,14 +11,12 @@ function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserA
   onSetUserAccountChange: (account: string) => void,
   userAccount: string
 }) {
-  const [chainId, setChainId] = useState<string>('')
   const [chainName, setChainName] = useState<string>('')
   const providers = useSyncProviders()
-  
+
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('chainChanged', (ChainId) => {
-        setChainId(ChainId)
         setChainName(getChain(parseInt(ChainId as string)).name)
       })
     }
@@ -35,7 +33,6 @@ function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserA
 
     if (accounts && accounts?.[0] && chainId) {
       setSelectedWallet(providerWithInfo)
-      setChainId(chainId as string)
       setChainName(getChain(parseInt(chainId as string)).name)
       onSetUserAccountChange(accounts[0] as string)
     }
