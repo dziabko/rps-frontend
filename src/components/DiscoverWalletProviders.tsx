@@ -11,12 +11,9 @@ function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserA
   onSetUserAccountChange: (account: string) => void,
   userAccount: string
 }) {
-  // const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>()
-  // const [userAccount, setUserAccount] = useState<string>('')
   const [chainId, setChainId] = useState<string>('')
   const [chainName, setChainName] = useState<string>('')
   const providers = useSyncProviders()
-  // const [provider, setProvider] = useState<EIP1193Provider>();
 
   console.log('providers', providers)
 
@@ -27,21 +24,15 @@ function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserA
         console.log("CHAINID: " + chainId)
         setChainId(ChainId)
         setChainName(getChain(parseInt(ChainId as string)).name)
-        // window.location.reload();
       })
     }
   })
 
   const handleConnect = async (providerWithInfo: EIP6963ProviderDetail) => {
-    // setProvider(providerWithInfo.provider)
-    // console.log('providerWithInfo', providerWithInfo)
-    // console.log('provider', providerWithInfo.provider)
     const accountsReq = await (providerWithInfo.provider
       .request({ method: 'eth_requestAccounts' }) as Promise<string[]>)
       .catch(console.error)
-
     const accounts = accountsReq as string[]
-
     const chainId = await providerWithInfo.provider
       .request({ method: 'eth_chainId' })
       .catch(console.error)
@@ -89,8 +80,6 @@ function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserA
             <img src={selectedWallet?.info.icon} alt={selectedWallet?.info.name} />
             <div>{selectedWallet?.info.name}</div>
             <div>({formatAddress(userAccount)})</div>
-            {/* <div><strong>uuid:</strong> {selectedWallet.info.uuid}</div> */}
-            {/* <div><strong>rdns:</strong> {selectedWallet.info.rdns}</div> */}
             <div><strong>Chain:</strong> {chainName}</div>
           </div>
         </div>
