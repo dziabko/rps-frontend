@@ -14,14 +14,10 @@ function DiscoverWalletProviders({ setSelectedWallet, selectedWallet, onSetUserA
   const [chainId, setChainId] = useState<string>('')
   const [chainName, setChainName] = useState<string>('')
   const providers = useSyncProviders()
-
-  console.log('providers', providers)
-
-
+  
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('chainChanged', (ChainId) => {
-        console.log("CHAINID: " + chainId)
         setChainId(ChainId)
         setChainName(getChain(parseInt(ChainId as string)).name)
       })
