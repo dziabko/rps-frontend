@@ -259,12 +259,12 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <div>
-          <div className="border-2 border-gray-300 p-6 rounded-md">
+          <div id="createGameContainer" className="">
             <div className="flex flex-col space-y-4">
               <h2 className="text-2xl mb-4">Create Game</h2>
               <div>
                 <input
-                  className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
+                  className="inputContainer"
                   type="number"
                   placeholder="Stake"
                   onChange={(e) => setStake1(parseFloat(e.target.value))}
@@ -272,21 +272,13 @@ function App() {
               </div>
               <div>
                 <input
-                  className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
+                  className="inputContainer"
                   type="text"
                   placeholder="Player 2"
                   onChange={(e) => handleSetPlayer2Address(e.target.value)}
                 />
               </div>
-              <div>
-                <input
-                  className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
-                  type="text"
-                  placeholder="Keccak256(move, salt)"
-                  disabled={true}
-                  value={c1Hash}
-                />
-              </div>
+
               <div>
                 <select className="border-2 border-gray-300 p-2 w-full max-w-xs" value={c1} onChange={(e) => setC1(parseInt(e.target.value))}>
                   <option value={0} selected disabled>
@@ -302,7 +294,7 @@ function App() {
               <div>
                 <div className='inputWithButton'>
                   <input
-                    className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
+                    className="inputContainerSalt"
                     type="text"
                     placeholder="Salt"
                     value={salt}
@@ -312,12 +304,21 @@ function App() {
                 </div>
               </div>
               <div>
+                <input
+                  className="inputContainer"
+                  type="text"
+                  placeholder="Keccak256(move, salt)"
+                  disabled={true}
+                  value={c1Hash}
+                />
+              </div>
+              <div>
                 <button onClick={() => handleHash()}>Hash(c1, salt)</button>
                 {/* <div>Result: {c1Hash}</div> */}
               </div>
               <div id="submitContainer">
 
-                <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={deployContract}>Submit</button>
+                <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={deployContract}>Create</button>
 
                 <div id="loadingSpinner" className="flex">
                   <LoadingSpin
@@ -326,12 +327,12 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="border-2 border-gray-300 p-6 rounded-md">
+          <div id="player2TurnContainer" className="border-2 border-gray-300 p-6 rounded-md">
             <div className="flex flex-col space-y-4">
               <h2 className="text-2xl mb-4">Player 2 Turn</h2>
               <div>
                 <input
-                  className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
+                  className="inputContainer"
                   type="text"
                   placeholder="RPS Contract Address"
                   onChange={(e) => handleSetContractAddress(e.target.value)}
@@ -339,7 +340,7 @@ function App() {
               </div>
               <div>
                 <input
-                  className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
+                  className="inputContainer"
                   type="text"
                   placeholder="Stake"
                   onChange={(e) => setStake2(parseFloat(e.target.value))}
@@ -357,16 +358,16 @@ function App() {
                   <option value={5}>Lizard</option>
                 </select>
               </div>
-              <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={() => callContractFunction()}>Submit</button>
+              <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={() => callContractFunction()}>Play</button>
             </div>
           </div>
-          <div className="border-2 border-gray-300 p-6 rounded-md">
+          <div id="player1TurnContainer" className="border-2 border-gray-300 p-6 rounded-md">
             <div className="flex flex-col space-y-4">
               <h2 className="text-2xl mb-4">Player 1 Solve</h2>
               {/* <div>{"Player 1 Address: " + userAccount}</div> */}
               <div className='w-full'>
                 <input
-                  className="border-gray-300 p-2 mb-2 w-full max-w-xs"
+                  className="inputContainer"
                   type="text"
                   placeholder="RPS Contract Address"
                   value={contractAddress}
@@ -387,14 +388,14 @@ function App() {
               </div>
               <div>
                 <input
-                  className="border-2 border-gray-300 p-2 mb-2 w-full max-w-xs"
+                  className="inputContainer"
                   type="text"
                   placeholder="Salt"
                   value={salt}
                   onChange={(e) => setSalt(e.target.value)}
                 />
               </div>
-              <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={solveContract}>Submit</button>
+              <button type="submit" id="submitBtn" className="border-2 border-gray-300 p-2 w-full max-w-xs" onClick={solveContract}>Solve</button>
             </div>
           </div>
         </div>
