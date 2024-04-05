@@ -91,6 +91,7 @@ select{
   margin: 10px;
   padding: 15px;
   border-radius: 8px;
+  width: 200px;
 }
 
 .inputContainer {
@@ -103,6 +104,7 @@ select{
   margin: 10px;
   padding: 15px;
   border-radius: 8px;
+  width: 200px;
 }
 
 #player1TurnContainer {
@@ -110,4 +112,12 @@ select{
   margin: 10px;
   padding: 15px;
   border-radius: 8px;
+  width: 200px;
+}
+
+#outerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
